@@ -4,7 +4,7 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
 import AddNewSessionDialog from './AddNewSessionDialog';
 import axios from 'axios';
-import { SessionDetail } from '../medical-agent/[sessionId]/page';
+import { SessionDetail } from '../travel-agent/[sessionId]/page';
 import HistoryTable from './HistoryTable';
 
 /**

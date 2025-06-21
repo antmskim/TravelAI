@@ -18,7 +18,7 @@ import axios from 'axios'
 import SuggestedAgentCard from './SuggestedAgentCard'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@clerk/nextjs'
-import { SessionDetail } from '../medical-agent/[sessionId]/page'
+import { SessionDetail } from '../travel-agent/[sessionId]/page'
 
 function AddNewSessionDialog({ open, setOpen, travelAgent }: { open?: boolean, setOpen?: (open: boolean) => void, travelAgent?: any } = {}) {
     // 🧠 Local state management

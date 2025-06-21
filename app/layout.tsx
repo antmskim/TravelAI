@@ -1,16 +1,23 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import {
   ClerkProvider,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from '@clerk/nextjs'
+  // SignInButton, // You might not need these here if they're used within AppHeader or other components
+  // SignUpButton,
+  // SignedIn,
+  // SignedOut,
+  // UserButton,
+} from '@clerk/nextjs';
 import Provider from "./provider";
 import { Toaster } from "@/components/ui/sonner";
+
+// Import your AppHeader component here
+// The path is relative to app/layout.tsx
+import AppHeader from './(routes)/dashboard/_components/AppHeader';
+
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -37,10 +44,16 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <Provider>
-            {children}
-            <Toaster />
-          </Provider>
+          {/* Render the AppHeader (your navbar) here. It will appear on ALL pages. */}
+          <AppHeader />
+
+          {/* Add padding to push content down */}
+          <div className="pt-16 pb-16"> {/* Adjust 'pt-16' based on your navbar's height */}
+            <Provider>
+              {children} {/* `children` represents the actual page content */}
+              <Toaster />
+            </Provider>
+          </div>
         </body>
       </html>
     </ClerkProvider>

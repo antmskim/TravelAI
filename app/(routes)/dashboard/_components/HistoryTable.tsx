@@ -8,7 +8,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { SessionDetail } from '../medical-agent/[sessionId]/page'
+import { SessionDetail } from '../travel-agent/[sessionId]/page'
 import { Button } from '@/components/ui/button'
 import moment from 'moment'
 import ViewReportDialog from './ViewReportDialog'
@@ -21,7 +21,7 @@ type Props = {
  * HistoryTable Component
  * 
  * Displays a table listing previous consultation sessions including:
- * - AI Medical Specialist
+ * - AI Travel Agent
  * - Notes/Description
  * - Created Date
  * - View Report Action
@@ -36,7 +36,7 @@ function HistoryTable({ historyList }: Props) {
                 {/* 🧾 Table Header Row */}
                 <TableHeader>
                     <TableRow>
-                        <TableHead>AI Medical Specialist</TableHead>
+                        <TableHead>AI Travel Agent</TableHead>
                         <TableHead>Description</TableHead>
                         <TableHead>Date</TableHead>
                         <TableHead className="text-right">Action</TableHead>
