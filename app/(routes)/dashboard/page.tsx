@@ -13,7 +13,7 @@ function Dashboard() {
 
             </div>
 
-            <p>Test</p>
+            <p>Test 1234!</p>
             <HistoryList />
 
             <TravelAgentList />
