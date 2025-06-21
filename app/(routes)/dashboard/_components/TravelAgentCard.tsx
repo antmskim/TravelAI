@@ -8,6 +8,7 @@ import { Loader2Icon } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
+import AddNewSessionDialog from './AddNewSessionDialog'
 
 /**
  * Type definition for each travel agent card
@@ -32,34 +33,13 @@ type props = {
  * and a button to start a new travel planning session.
  */
 function TravelAgentCard({ travelAgent }: props) {
-    const [loading, setLoading] = useState(false);
-    const router = useRouter();
+    const [open, setOpen] = useState(false);
     const { has } = useAuth();
-
-    // ✅ Check if the user has a 'pro' plan using Clerk's has() helper
     //@ts-ignore
     const paidUser = has && has({ plan: 'pro' });
 
-    /**
-     * 📞 Handle Start Planning Button Click
-     * Creates a new session with the selected travel agent and redirects to the session page.
-     */
-    const onStartPlanning = async () => {
-        setLoading(true);
-
-        // Post the new session to backend API
-        const result = await axios.post('/api/session-chat', {
-            notes: 'New Travel Query',
-            selectedAgent: travelAgent
-        });
-
-        if (result.data?.sessionId) {
-            // Navigate to the new session page
-            router.push('/dashboard/travel-agent/' + result.data.sessionId);
-        }
-
-        setLoading(false);
-    }
+    // Open the modal on button click
+    const onStartPlanning = () => setOpen(true);
 
     return (
         <div className='relative'>
@@ -91,13 +71,9 @@ function TravelAgentCard({ travelAgent }: props) {
                 onClick={onStartPlanning}
                 disabled={!paidUser && travelAgent.subscriptionRequired} // disable if agent is premium & user isn't
             >
-                Start Planning{' '}
-                {loading ? (
-                    <Loader2Icon className='animate-spin' />
-                ) : (
-                    <IconArrowRight />
-                )}
+                Start Planning <IconArrowRight />
             </Button>
+            <AddNewSessionDialog open={open} setOpen={setOpen} travelAgent={travelAgent} />
         </div>
     )
 }

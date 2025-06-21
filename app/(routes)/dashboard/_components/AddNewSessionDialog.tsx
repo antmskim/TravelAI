@@ -20,7 +20,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@clerk/nextjs'
 import { SessionDetail } from '../medical-agent/[sessionId]/page'
 
-function AddNewSessionDialog({ open, setOpen }: { open?: boolean, setOpen?: (open: boolean) => void } = {}) {
+function AddNewSessionDialog({ open, setOpen, travelAgent }: { open?: boolean, setOpen?: (open: boolean) => void, travelAgent?: any } = {}) {
     // 🧠 Local state management
     const [note, setNote] = useState<string>(); // stores user travel input
     const [loading, setLoading] = useState(false); // tracks loading state
@@ -47,9 +47,11 @@ function AddNewSessionDialog({ open, setOpen }: { open?: boolean, setOpen?: (ope
     // 🩺 Handles "Start Planning" button — saves session and redirects
     const onStartPlanning = async () => {
         setLoading(true);
-        // Always use the single travel agent
-        const { AITravelAgents } = await import('@/shared/list');
-        const selectedAgent = AITravelAgents[0];
+        let selectedAgent = travelAgent;
+        if (!selectedAgent) {
+            const { AITravelAgents } = await import('@/shared/list');
+            selectedAgent = AITravelAgents[0];
+        }
         const result = await axios.post('/api/session-chat', {
             notes: note,
             selectedAgent: selectedAgent
