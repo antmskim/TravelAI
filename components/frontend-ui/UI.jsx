@@ -1,41 +1,42 @@
+// components/frontend-ui/UI.jsx
 import { useRef, useState } from "react";
-import { useChat } from "../hooks/useChat";
+import { useChat } from "@/lib/hooks/useChat"; // FIX: Update import path
 
 export const UI = ({ hidden, ...props }) => {
   const input = useRef();
   const fileInputRef = useRef();
-  const { chat, loading, cameraZoomed, setCameraZoomed, message, locationError } = useChat();
+  // Get logClientMessage from useChat hook
+  const { chat, loading, cameraZoomed, setCameraZoomed, message, locationError, logClientMessage } = useChat();
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    console.log("File selected:", file);
+    logClientMessage('info', `File selected for upload: ${file ? file.name : 'none'}`, 'UI.jsx'); // Added logging
     
     if (file) {
-      // Validate file type
       if (!file.type.startsWith('image/')) {
+        logClientMessage('warn', 'User attempted to upload non-image file type.', 'UI.jsx'); // Added logging
         alert('Please select an image file');
         return;
       }
       
-      // Validate file size (e.g., max 10MB)
       if (file.size > 10 * 1024 * 1024) {
+        logClientMessage('warn', `User attempted to upload image larger than 10MB: ${file.name} (${file.size} bytes).`, 'UI.jsx'); // Added logging
         alert('File size too large. Please select an image under 10MB.');
         return;
       }
       
-      console.log("Valid image file:", file.name, file.type, file.size);
+      logClientMessage('info', `Valid image file selected: ${file.name}, type: ${file.type}, size: ${file.size} bytes.`, 'UI.jsx'); // Added logging
       setImage(file);
       
-      // Create preview
       const reader = new FileReader();
       reader.onload = (e) => {
         setImagePreview(e.target.result);
+        logClientMessage('info', `Image preview generated for ${file.name}.`, 'UI.jsx'); // Added logging
       };
       reader.readAsDataURL(file);
       
-      // Clear the text input when an image is selected
       if (input.current) {
         input.current.value = "";
       }
@@ -43,6 +44,7 @@ export const UI = ({ hidden, ...props }) => {
   };
 
   const clearImage = () => {
+    logClientMessage('info', 'Image preview cleared by user.', 'UI.jsx'); // Added logging
     setImage(null);
     setImagePreview(null);
     if (fileInputRef.current) {
@@ -52,12 +54,14 @@ export const UI = ({ hidden, ...props }) => {
 
   const sendMessage = () => {
     const text = input.current.value.trim();
-    console.log("Sending message - Text:", text, "Image:", image);
+    logClientMessage('info', `Sending message. Text: "${text}", Image: ${image ? 'Yes' : 'No'}.`, 'UI.jsx'); // Added logging
     
     if (!loading && (text || image)) {
       chat(text, image);
       input.current.value = "";
       clearImage();
+    } else {
+      logClientMessage('warn', `Attempted to send empty message or while AI is loading. Text: "${text}", Image: ${image ? 'Yes' : 'No'}. Loading: ${loading}.`, 'UI.jsx'); // Added logging
     }
   };
 
@@ -67,16 +71,15 @@ export const UI = ({ hidden, ...props }) => {
 
   return (
     <>
-      {/* Location Error Display */}
       {locationError && (
         <div className="fixed top-16 left-0 right-0 z-20 flex justify-center">
           <div className="bg-red-500/80 backdrop-blur-md text-white px-4 py-2 rounded-lg">
             <p>{locationError}</p>
+            {logClientMessage('error', `Location error displayed: ${locationError}`, 'UI.jsx')} {/* Added logging */}
           </div>
         </div>
       )}
 
-      {/* Image Preview */}
       {imagePreview && (
         <div className="fixed top-20 left-4 z-20 bg-white/90 backdrop-blur-md p-2 rounded-lg max-w-xs">
           <div className="relative">
@@ -102,10 +105,12 @@ export const UI = ({ hidden, ...props }) => {
           <p>Your personal AI guide to the world!</p>
         </div>
         
-        {/* Camera and Green Screen Buttons */}
         <div className="w-full flex flex-col items-end justify-center gap-4">
           <button
-            onClick={() => setCameraZoomed(!cameraZoomed)}
+            onClick={() => {
+              setCameraZoomed(!cameraZoomed);
+              logClientMessage('info', `Camera zoomed: ${!cameraZoomed}`, 'UI.jsx'); // Added logging
+            }}
             className="pointer-events-auto bg-pink-500 hover:bg-pink-600 text-white p-4 rounded-md"
           >
             {cameraZoomed ? (
@@ -122,6 +127,7 @@ export const UI = ({ hidden, ...props }) => {
             onClick={() => {
               const body = document.querySelector("body");
               body.classList.toggle("greenScreen");
+              logClientMessage('info', `Green screen toggled. Is green screen: ${body.classList.contains('greenScreen')}`, 'UI.jsx'); // Added logging
             }}
             className="pointer-events-auto bg-pink-500 hover:bg-pink-600 text-white p-4 rounded-md"
           >
@@ -131,9 +137,7 @@ export const UI = ({ hidden, ...props }) => {
           </button>
         </div>
 
-        {/* Chat Input Bar */}
         <div className="flex items-center gap-2 pointer-events-auto max-w-screen-sm w-full mx-auto">
-          {/* Image Upload Button */}
           <label 
             htmlFor="image-upload" 
             className={`cursor-pointer font-bold p-4 rounded-md transition-colors ${
@@ -158,6 +162,7 @@ export const UI = ({ hidden, ...props }) => {
             ref={input}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
+                logClientMessage('info', 'Enter key pressed in input field.', 'UI.jsx'); // Added logging
                 sendMessage();
               }
             }}

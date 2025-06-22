@@ -17,4 +17,5 @@ export const SessionChatTable = pgTable('sessionChatTable', {
     report: json(),
     createdBy: varchar().references(() => usersTable.email),
     createdOn: varchar(),
+    lastActiveAt: varchar(),
 })
